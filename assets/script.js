@@ -13,7 +13,7 @@ function addTrain(){
 		name = $("#name-input").val().trim();
 		destination = $("#destination-input").val().trim();
 		frequency = $("#frequency-input").val().trim();
-		firstTrainTime = $("#time-input").val().trim();
+		firstTrainTime = moment($("#time-input").val().trim(), "HH:mm").format("X");
 		//send data to Firebase
 		dataRef.push({
 			trainName: name,
@@ -32,18 +32,22 @@ function addTrain(){
 function pushData(){
 	dataRef.on("child_added", function(childSnapshot){
 
-		var trainName = childSnapshot.val().name;
+		var trainName = childSnapshot.val().trainName;
 		var trainDestination = childSnapshot.val().destination;
 		var trainFrequency = childSnapshot.val().frequency;
 
 		var difference = moment().diff(moment.unix("firstTrainTime"), "minutes")
+		console.log(difference);
 		var x = difference%trainFrequency
+		console.log(x);
 		var minutesAway = trainFrequency - x
+		console.log(minutesAway)
 		var nextArrival = moment() + minutesAway
+		console.log(nextArrival);
 
-		var prettyNextArrival = nextArrival.format("HH:mm");
+		var prettyNextArrival = moment(nextArrival, "HH:mm");
 
-		$("#trainTable tbody:last-child").append('<tr><td>' + 
+		$("#trainTable > tbody").append('<tr><td>' + 
 			trainName +'</td><td>' + 
 			trainDestination + '</td><td>' + 
 			trainFrequency + '</td><td>' +
